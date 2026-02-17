@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoodLens - Sistem Mimarisi ve UML Diyagramları</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #333;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        h3 {
+            color: #555;
+            margin-top: 30px;
+        }
+        .diagram-container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border: 1px solid #e0e0e0;
+        }
+        .erd-container {
+            position: relative;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+            height: 800px;
+            cursor: grab;
+            border: 1px solid #e0e0e0;
+        }
+        .erd-container:active {
+            cursor: grabbing;
+        }
+        .erd-zoom-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .erd-zoom-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .erd-zoom-btn:hover {
+            background: #2980b9;
+        }
+        .erd-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            transform-origin: 0 0;
+        }
+        .erd-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: 0 0;
+            transition: transform 0.1s ease-out;
+            min-width: 100%;
+            min-height: 100%;
+        }
+        .erd-content .mermaid {
+            min-width: 100%;
+        }
+        .mermaid {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .info-box {
+            background: #ecf0f1;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .tech-item {
+            background: #f5f6fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        .tech-item strong {
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #34495e;
+            color: white;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 MoodLens - Sistem Mimarisi</h1>
+        <p style="text-align: center; color: #666; font-size: 1.1em;">
+            Duygu Analizi Tabanlı Mekan Öneri Sistemi
+        </p>
+
+        <div class="info-box">
+            <strong>📋 Proje Bilgileri:</strong><br>
+            • Backend: Spring Boot 4.0.0 (Java 25)<br>
+            • Frontend: Flutter (Dart)<br>
+            • Veritabanı: PostgreSQL 15.4<br>
+            • Dış API: Google Places API<br>
+            • Authentication: JWT Token
+        </div>
+
+        <h2>1. Sistem Mimarisi</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
+graph TB
+    subgraph "Flutter Mobile App"
+        UI[User Interface Screens]
+        Models[Models: User, Recommendation, Favorite, PlaceVisit]
+        Services[Services: ApiService, EmotionDetectionService]
+        Providers[Providers: AuthProvider, ThemeProvider]
+    end
+    
+    subgraph "Spring Boot Backend"
+        Controllers[Controllers: Auth, User, Emotion, Recommendation, etc.]
+        Services2[Services: EmotionService, RecommendationService, etc.]
+        Repositories[Repositories: JPA Repositories]
+        Security[JWT Security Filter]
+    end
+    
+    subgraph "PostgreSQL Database"
+        Tables[(Database Tables)]
+    end
+    
+    subgraph "External APIs"
+        GooglePlaces[Google Places API]
+    end
+    
+    UI --> Services
+    Services -->|HTTP/REST| Controllers
+    Controllers --> Services2
+    Services2 --> Repositories
+    Repositories --> Tables
+    Services2 -->|API Calls| GooglePlaces
+    GooglePlaces -->|Place Data| Services2
+    Services2 -->|Save Places| Tables
+            </div>
+        </div>
+
+        <h2>2. Veritabanı Entity İlişkileri (ERD)</h2>
+        <div class="erd-container">
+            <div class="erd-zoom-controls">
+                <button class="erd-zoom-btn" onclick="zoomERD(1.2)" title="Yakınlaştır">🔍+</button>
+                <button class="erd-zoom-btn" onclick="resetERDZoom()" title="Sıfırla">🔍</button>
+                <button class="erd-zoom-btn" onclick="zoomERD(0.8)" title="Uzaklaştır">🔍-</button>
+            </div>
+            <div class="erd-wrapper" id="erdWrapper">
+                <div class="erd-content" id="erdContent">
+                    <div class="mermaid" id="erdDiagram">
+erDiagram
+    %% Core User Relationships
+    USER ||--o{ EMOTIONLOG : creates
+    USER ||--o{ FAVORITE : has
+    USER ||--o{ PLACEVISIT : visits
+    USER ||--o{ STORY : creates
+    USER ||--o{ PHOTO : uploads
+    USER ||--o{ NOTIFICATION : receives
+    USER ||--|| USERPREFERENCES : has
+    
+    %% Emotion and EmotionLog
+    EMOTION ||--o{ EMOTIONLOG : detected_in
+    EMOTION ||--o{ EMOTIONPLACEMAP : mapped_to
+    PHOTO ||--o| EMOTIONLOG : used_in
+    EMOTIONLOG ||--o{ RECOMMENDATION : generates
+    
+    %% Recommendation (Many-to-One relationships)
+    RECOMMENDATION }o--|| USER : received_by
+    RECOMMENDATION }o--|| EMOTIONLOG : generated_by
+    RECOMMENDATION }o--|| PLACE : recommends
+    
+    %% Place and PlaceTag
+    PLACE ||--o{ RECOMMENDATION : recommended_in
+    PLACETAG ||--o{ EMOTIONPLACEMAP : mapped_in
+    EMOTIONPLACEMAP }o--|| EMOTION : emotion
+    EMOTIONPLACEMAP }o--|| PLACETAG : place_tag
+    
+    %% Story and related entities
+    STORY ||--o{ MESSAGE : referenced_in
+    STORY ||--o{ STORYCOMMENT : has
+    STORY ||--o{ STORYLIKE : has
+    STORY ||--o{ STORYVIEW : viewed_by
+    STORYCOMMENT }o--|| USER : commented_by
+    STORYLIKE }o--|| USER : liked_by
+    STORYVIEW }o--|| USER : viewed_by
+    
+    %% Message (Self-referencing through sender/receiver)
+    MESSAGE }o--|| USER : sender
+    MESSAGE }o--|| USER : receiver
+    
+    %% Friend (Self-referencing Many-to-Many)
+    FRIEND }o--|| USER : user
+    FRIEND }o--|| USER : friend
+    
+    %% FriendRequest (Self-referencing)
+    FRIENDREQUEST }o--|| USER : sender
+    FRIENDREQUEST }o--|| USER : receiver
+    
+    %% BlockedUser (Self-referencing)
+    BLOCKEDUSER }o--|| USER : blocker
+    BLOCKEDUSER }o--|| USER : blocked
+    
+    %% Notification
+    NOTIFICATION }o--|| USER : user
+    NOTIFICATION }o--o| USER : related_user
+    
+    %% External API
+    GOOGLEPLACESAPI ||--o{ PLACE : syncs
+    
+    USER {
+        bigint id PK
+        string username UK
+        string email UK
+        string hashed_password
+        datetime created_at
+        datetime last_active_at
+        string locale
+        boolean consent_face
+        boolean consent_location
+        string role
+        string profile_picture_url
+    }
+    
+    EMOTIONLOG {
+        bigint id PK
+        bigint user_id FK
+        bigint photo_id FK
+        short detected_emotion_id FK
+        float confidence
+        text raw_output
+        numeric latitude
+        numeric longitude
+        datetime created_at
+    }
+    
+    RECOMMENDATION {
+        bigint id PK
+        bigint user_id FK
+        bigint emotion_log_id FK
+        bigint place_id FK
+        float score
+        boolean shown
+        boolean clicked
+        datetime created_at
+    }
+    
+    FAVORITE {
+        bigint id PK
+        bigint user_id FK
+        string place_external_id
+        string place_name
+        string place_category
+        numeric latitude
+        numeric longitude
+        text address
+        numeric rating
+        text image_url
+        datetime created_at
+    }
+    
+    PLACE {
+        bigint id PK
+        string external_id UK
+        string name
+        text description
+        text address
+        numeric latitude
+        numeric longitude
+        text tags
+        float rating
+        text image_url
+        text website
+        text phone
+        text open_hours
+        boolean is_editor_choice
+        datetime created_at
+        datetime updated_at
+    }
+    
+    GOOGLEPLACESAPI {
+        string api_key
+        string place_id
+        string name
+        text formatted_address
+        text types
+        numeric rating
+        integer user_ratings_total
+        text photo_reference
+        numeric lat
+        numeric lng
+        text place_details
+    }
+    
+    STORYCOMMENT {
+        bigint id PK
+        bigint story_id FK
+        bigint user_id FK
+        text content
+        datetime created_at
+    }
+    
+    STORYLIKE {
+        bigint id PK
+        bigint story_id FK
+        bigint user_id FK
+        datetime created_at
+    }
+    
+    STORYVIEW {
+        bigint id PK
+        bigint story_id FK
+        bigint viewer_id FK
+        datetime viewed_at
+    }
+    
+    STORY {
+        bigint id PK
+        bigint user_id FK
+        text image_url
+        text caption
+        datetime created_at
+        datetime expires_at
+    }
+    
+    FRIEND {
+        bigint id PK
+        bigint user_id FK
+        bigint friend_id FK
+        datetime created_at
+    }
+    
+    FRIENDREQUEST {
+        bigint id PK
+        bigint sender_id FK
+        bigint receiver_id FK
+        string status
+        datetime created_at
+        datetime updated_at
+    }
+    
+    MESSAGE {
+        bigint id PK
+        bigint sender_id FK
+        bigint receiver_id FK
+        bigint story_id FK
+        text content
+        boolean is_read
+        datetime created_at
+    }
+    
+    NOTIFICATION {
+        bigint id PK
+        bigint user_id FK
+        string type
+        string title
+        text message
+        bigint related_user_id FK
+        bigint related_entity_id
+        boolean is_read
+        datetime created_at
+        datetime updated_at
+    }
+    
+    PHOTO {
+        bigint id PK
+        bigint user_id FK
+        text storage_path
+        datetime taken_at
+        string device
+        integer width
+        integer height
+    }
+    
+    PLACEVISIT {
+        bigint id PK
+        bigint user_id FK
+        string place_external_id
+        string place_name
+        string place_category
+        numeric latitude
+        numeric longitude
+        datetime visited_at
+        integer rating
+        text review
+    }
+    
+    STORYCOMMENT {
+        bigint id PK
+        bigint story_id FK
+        bigint user_id FK
+        text content
+        datetime created_at
+    }
+    
+    STORYLIKE {
+        bigint id PK
+        bigint story_id FK
+        bigint user_id FK
+        datetime created_at
+    }
+    
+    STORYVIEW {
+        bigint id PK
+        bigint story_id FK
+        bigint viewer_id FK
+        datetime viewed_at
+    }
+    
+    BLOCKEDUSER {
+        bigint id PK
+        bigint blocker_id FK
+        bigint blocked_id FK
+        datetime created_at
+    }
+    
+    USERPREFERENCES {
+        bigint user_id PK
+        boolean prefer_quiet
+        integer max_distance_meters
+        text preferred_tags
+    }
+    
+    EMOTION {
+        short id PK
+        string key UK
+        string display_name
+        text description
+    }
+    
+    PLACETAG {
+        integer id PK
+        string tag UK
+        text description
+    }
+    
+    EMOTIONPLACEMAP {
+        integer id PK
+        short emotion_id FK
+        integer place_tag_id FK
+        float weight
+        text note
+    }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>3. Veri Akış Diyagramı</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
+sequenceDiagram
+    participant User as 👤 Kullanıcı
+    participant Flutter as 📱 Flutter App
+    participant API as 🔌 REST API
+    participant Service as ⚙️ Backend Service
+    participant DB as 🗄️ PostgreSQL
+    participant Google as 🌐 Google Places API
+    
+    User->>Flutter: Fotoğraf Çek
+    Flutter->>Flutter: Duygu Tespiti (ML)
+    Flutter->>API: POST /emotions/log
+    API->>Service: createEmotionLog()
+    Service->>DB: Save EmotionLog
+    DB-->>Service: EmotionLog ID
+    
+    Service->>Service: generateRecommendations()
+    Service->>DB: Get User Preferences
+    Service->>DB: Get Emotion-Place Mappings
+    Service->>DB: Get Nearby Places (DB)
+    Service->>Google: Nearby Search API
+    Google-->>Service: Place List
+    Service->>DB: Save New Places
+    Service->>Service: Calculate Scores
+    Service->>DB: Save Recommendations
+    DB-->>Service: Recommendations
+    Service-->>API: Response
+    API-->>Flutter: EmotionLog + Recommendations
+    Flutter->>User: Önerileri Göster
+            </div>
+        </div>
+
+        <h2>4. API Endpoint Yapısı</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
+graph LR
+    subgraph Auth["Auth Endpoints"]
+        A1["POST /auth/register"]
+        A2["POST /auth/login"]
+        A3["POST /auth/change-password"]
+        A4["POST /auth/logout"]
+    end
+    
+    subgraph User["User Endpoints"]
+        U1["GET /users/:id"]
+        U2["GET /users/search"]
+        U3["POST /users/:id/block"]
+        U4["DELETE /users/:id/block"]
+    end
+    
+    subgraph Emotion["Emotion Endpoints"]
+        E1["POST /emotions/log"]
+        E2["GET /emotions/logs"]
+        E3["GET /emotions"]
+    end
+    
+    subgraph Recommendation["Recommendation Endpoints"]
+        R1["GET /recommendations"]
+        R2["POST /recommendations/:id/click"]
+        R3["POST /recommendations/:id/feedback"]
+    end
+    
+    subgraph Place["Place Endpoints"]
+        P1["GET /places/:id"]
+        P2["GET /places/search"]
+        P3["GET /places/editor-choice"]
+    end
+    
+    subgraph Story["Story Endpoints"]
+        S1["POST /stories"]
+        S2["GET /stories"]
+        S3["GET /stories/:id"]
+        S4["POST /stories/:id/view"]
+        S5["POST /stories/:id/like"]
+        S6["POST /stories/:id/comment"]
+    end
+    
+    subgraph Friend["Friend Endpoints"]
+        F1["POST /friends/request"]
+        F2["POST /friends/accept"]
+        F3["POST /friends/reject"]
+        F4["GET /friends"]
+        F5["GET /friends/requests"]
+    end
+    
+    subgraph Admin["Admin Endpoints"]
+        AD1["GET /admin/dashboard/stats"]
+        AD2["GET /admin/users"]
+        AD3["GET /admin/emotion-logs"]
+        AD4["GET /admin/recommendations"]
+        AD5["GET /admin/favorites"]
+    end
+            </div>
+        </div>
+
+        <h2>5. Flutter Ekran Yapısı</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
+graph TD
+    subgraph "Auth Screens"
+        Login[LoginScreen]
+        Register[RegisterScreen]
+        Onboarding[OnboardingScreen]
+    end
+    
+    subgraph "User Screens"
+        Home[UserHomeScreen]
+        Camera[UserCameraScreen]
+        Map[RecommendationMapScreen]
+        History[UserHistoryScreen]
+        Profile[UserProfileScreen]
+        Recommendations[UserRecommendationsScreen]
+        Favorites[UserFavoritesScreen]
+        Friends[UserFriendsScreen]
+        Messages[UserMessagesScreen]
+        Stories[UserStoriesScreen]
+        StoryCreate[StoryCreationScreen]
+        Notifications[UserNotificationsScreen]
+        Settings[UserSettingsScreen]
+        Search[UserSearchScreen]
+    end
+    
+    subgraph "Admin Screens"
+        AdminHome[AdminHomeScreen]
+        AdminDashboard[AdminDashboardScreen]
+        AdminUsers[AdminUsersScreen]
+        AdminPlaces[AdminPlacesScreen]
+        AdminEmotionLogs[AdminEmotionLogsScreen]
+        AdminRecommendations[AdminRecommendationsScreen]
+        AdminFavorites[AdminFavoritesScreen]
+        AdminStories[AdminStoriesScreen]
+        AdminProfile[AdminProfileScreen]
+    end
+    
+    Login -->|Success| Home
+    Register -->|Success| Home
+    Home --> Camera
+    Home --> Map
+    Home --> History
+    Home --> Profile
+    Camera -->|Emotion Analysis| Recommendations
+    Recommendations --> Map
+            </div>
+        </div>
+
+        <h2>6. Dış API Entegrasyonu</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
+graph TB
+    subgraph "Google Places API"
+        Nearby[Nearby Search API]
+        TextSearch[Text Search API]
+        Details[Place Details API]
+    end
+    
+    subgraph "Backend Services"
+        RecService[RecommendationService]
+        PlaceService[PlaceSyncService]
+        AdminService[AdminPlaceService]
+    end
+    
+    subgraph "Data Flow"
+        Emotion[Emotion Detection]
+        Emotion -->|Emotion Type| RecService
+        RecService -->|Get Places by Emotion| Nearby
+        Nearby -->|Place List| RecService
+        RecService -->|Save to DB| Place[(Places Table)]
+        
+        AdminService -->|Search Places| TextSearch
+        TextSearch -->|Place Data| AdminService
+        AdminService -->|Save| Place
+        
+        PlaceService -->|Sync Places| Details
+        Details -->|Full Details| PlaceService
+        PlaceService -->|Update| Place
+    end
+    
+    style Nearby fill:#4285F4
+    style TextSearch fill:#4285F4
+    style Details fill:#4285F4
+            </div>
+        </div>
+
+        <h2>7. İlişki Detayları</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Entity 1</th>
+                    <th>İlişki</th>
+                    <th>Entity 2</th>
+                    <th>Kardinalite</th>
+                    <th>Açıklama</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>User</td>
+                    <td>creates</td>
+                    <td>EmotionLog</td>
+                    <td>1:N</td>
+                    <td>Bir kullanıcı birden fazla duygu logu oluşturabilir</td>
+                </tr>
+                <tr>
+                    <td>EmotionLog</td>
+                    <td>generates</td>
+                    <td>Recommendation</td>
+                    <td>1:N</td>
+                    <td>Bir duygu logu birden fazla öneri üretebilir</td>
+                </tr>
+                <tr>
+                    <td>User</td>
+                    <td>receives</td>
+                    <td>Recommendation</td>
+                    <td>1:N</td>
+                    <td>Bir kullanıcı birden fazla öneri alabilir</td>
+                </tr>
+                <tr>
+                    <td>Place</td>
+                    <td>recommended_in</td>
+                    <td>Recommendation</td>
+                    <td>1:N</td>
+                    <td>Bir mekan birden fazla öneride yer alabilir</td>
+                </tr>
+                <tr>
+                    <td>User</td>
+                    <td>has</td>
+                    <td>Favorite</td>
+                    <td>1:N</td>
+                    <td>Bir kullanıcı birden fazla favori mekana sahip olabilir</td>
+                </tr>
+                <tr>
+                    <td>User</td>
+                    <td>friends_with</td>
+                    <td>User</td>
+                    <td>N:M</td>
+                    <td>Kullanıcılar birbirleriyle arkadaş olabilir (Friend tablosu)</td>
+                </tr>
+                <tr>
+                    <td>User</td>
+                    <td>sends</td>
+                    <td>FriendRequest</td>
+                    <td>1:N</td>
+                    <td>Bir kullanıcı birden fazla arkadaşlık isteği gönderebilir</td>
+                </tr>
+                <tr>
+                    <td>User</td>
+                    <td>receives</td>
+                    <td>FriendRequest</td>
+                    <td>1:N</td>
+                    <td>Bir kullanıcı birden fazla arkadaşlık isteği alabilir</td>
+                </tr>
+                <tr>
+                    <td>User</td>
+                    <td>creates</td>
+                    <td>Story</td>
+                    <td>1:N</td>
+                    <td>Bir kullanıcı birden fazla story oluşturabilir</td>
+                </tr>
+                <tr>
+                    <td>Story</td>
+                    <td>has</td>
+                    <td>StoryComment</td>
+                    <td>1:N</td>
+                    <td>Bir story birden fazla yoruma sahip olabilir</td>
+                </tr>
+                <tr>
+                    <td>Story</td>
+                    <td>has</td>
+                    <td>StoryLike</td>
+                    <td>1:N</td>
+                    <td>Bir story birden fazla beğeni alabilir</td>
+                </tr>
+                <tr>
+                    <td>Story</td>
+                    <td>viewed_by</td>
+                    <td>StoryView</td>
+                    <td>1:N</td>
+                    <td>Bir story birden fazla görüntülenme kaydına sahip olabilir</td>
+                </tr>
+                <tr>
+                    <td>Emotion</td>
+                    <td>mapped_to</td>
+                    <td>EmotionPlaceMap</td>
+                    <td>1:N</td>
+                    <td>Bir duygu birden fazla mekan tag'i ile eşleştirilebilir</td>
+                </tr>
+                <tr>
+                    <td>PlaceTag</td>
+                    <td>mapped_in</td>
+                    <td>EmotionPlaceMap</td>
+                    <td>1:N</td>
+                    <td>Bir mekan tag'i birden fazla duygu ile eşleştirilebilir</td>
+                </tr>
+                <tr>
+                    <td>User</td>
+                    <td>has</td>
+                    <td>UserPreferences</td>
+                    <td>1:1</td>
+                    <td>Her kullanıcının bir tercih kaydı vardır</td>
+                </tr>
+                <tr>
+                    <td>User</td>
+                    <td>uploads</td>
+                    <td>Photo</td>
+                    <td>1:N</td>
+                    <td>Bir kullanıcı birden fazla fotoğraf yükleyebilir</td>
+                </tr>
+                <tr>
+                    <td>Photo</td>
+                    <td>used_in</td>
+                    <td>EmotionLog</td>
+                    <td>1:1</td>
+                    <td>Bir fotoğraf bir duygu logunda kullanılabilir</td>
+                </tr>
+                <tr>
+                    <td>User</td>
+                    <td>visits</td>
+                    <td>PlaceVisit</td>
+                    <td>1:N</td>
+                    <td>Bir kullanıcı birden fazla mekan ziyareti yapabilir</td>
+                </tr>
+                <tr>
+                    <td>User</td>
+                    <td>blocks</td>
+                    <td>BlockedUser</td>
+                    <td>1:N</td>
+                    <td>Bir kullanıcı birden fazla kullanıcıyı engelleyebilir</td>
+                </tr>
+                <tr>
+                    <td>User</td>
+                    <td>blocked_by</td>
+                    <td>BlockedUser</td>
+                    <td>1:N</td>
+                    <td>Bir kullanıcı birden fazla kullanıcı tarafından engellenebilir</td>
+                </tr>
+                <tr>
+                    <td>Emotion</td>
+                    <td>mapped_to</td>
+                    <td>EmotionPlaceMap</td>
+                    <td>1:N</td>
+                    <td>Bir duygu birden fazla mekan tag'i ile eşleştirilebilir</td>
+                </tr>
+                <tr>
+                    <td>PlaceTag</td>
+                    <td>mapped_in</td>
+                    <td>EmotionPlaceMap</td>
+                    <td>1:N</td>
+                    <td>Bir mekan tag'i birden fazla duygu ile eşleştirilebilir</td>
+                </tr>
+                <tr>
+                    <td>EmotionPlaceMap</td>
+                    <td>links</td>
+                    <td>Emotion, PlaceTag</td>
+                    <td>N:M</td>
+                    <td>Duygular ve mekan tag'leri arasında çoktan çoka ilişki</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>8. Teknoloji Yığını</h2>
+        <div class="tech-stack">
+            <div class="tech-item">
+                <strong>Backend Framework</strong><br>
+                Spring Boot 4.0.0
+            </div>
+            <div class="tech-item">
+                <strong>Frontend Framework</strong><br>
+                Flutter (Dart)
+            </div>
+            <div class="tech-item">
+                <strong>Veritabanı</strong><br>
+                PostgreSQL 15.4
+            </div>
+            <div class="tech-item">
+                <strong>ORM</strong><br>
+                Hibernate / JPA
+            </div>
+            <div class="tech-item">
+                <strong>Authentication</strong><br>
+                JWT (JSON Web Token)
+            </div>
+            <div class="tech-item">
+                <strong>HTTP Client</strong><br>
+                Dio (Flutter), WebClient (Spring)
+            </div>
+            <div class="tech-item">
+                <strong>Dış API</strong><br>
+                Google Places API
+            </div>
+            <div class="tech-item">
+                <strong>Database Migration</strong><br>
+                Flyway
+            </div>
+        </div>
+
+        <h2>9. Güvenlik Katmanı</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
+graph TB
+    Request[HTTP Request] --> Filter[JWT Authentication Filter]
+    Filter -->|Valid Token| Extract[Extract User ID & Role]
+    Extract --> Controller[Controller]
+    Controller -->|@PreAuthorize| CheckRole[Role Check]
+    CheckRole -->|ADMIN| AdminEndpoint[Admin Endpoints]
+    CheckRole -->|USER| UserEndpoint[User Endpoints]
+    Filter -->|Invalid Token| Reject[401 Unauthorized]
+    
+    style Filter fill:#ff9800
+    style CheckRole fill:#4caf50
+    style Reject fill:#f44336
+            </div>
+        </div>
+
+        <h2>10. Öneri Sistemi Algoritması</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
+flowchart TD
+    Start[Emotion Log Oluşturuldu] --> GetPrefs[Kullanıcı Tercihlerini Al]
+    GetPrefs --> GetMappings[Emotion-Place Tag Eşleştirmelerini Al]
+    GetMappings --> GetDBPlaces[Veritabanından Yakın Mekanları Al]
+    GetDBPlaces --> CallGoogle[Google Places API Çağrısı]
+    CallGoogle --> SavePlaces[Yeni Mekanları Veritabanına Kaydet]
+    SavePlaces --> CalculateScore[Her Mekan İçin Skor Hesapla]
+    CalculateScore --> ScoreFactors{Skor Faktörleri}
+    ScoreFactors --> Distance[Uzaklık: 40%]
+    ScoreFactors --> EmotionMatch[Duygu Eşleşmesi: 30%]
+    ScoreFactors --> Rating[Rating: 20%]
+    ScoreFactors --> UserPrefs[Kullanıcı Tercihleri: 10%]
+    Distance --> Sort[Skora Göre Sırala]
+    EmotionMatch --> Sort
+    Rating --> Sort
+    UserPrefs --> Sort
+    Sort --> Top10[En Yüksek 10 Mekanı Seç]
+    Top10 --> SaveRecs[Recommendations Tablosuna Kaydet]
+    SaveRecs --> Return[Kullanıcıya Döndür]
+    
+    style Start fill:#4caf50
+    style Return fill:#2196f3
+    style CalculateScore fill:#ff9800
+            </div>
+        </div>
+
+        <h2>11. Model Sınıfları (Flutter)</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
+classDiagram
+    class UserModel {
+        +String token
+        +String username
+        +String email
+        +int userId
+        +String role
+        +String? profilePictureUrl
+        +fromJson()
+        +toJson()
+        +isAdmin
+        +isUser
+    }
+    
+    class RecommendationModel {
+        +int id
+        +String name
+        +String? description
+        +double latitude
+        +double longitude
+        +String? address
+        +String? category
+        +List~String~? tags
+        +double? rating
+        +double? distance
+        +double? score
+        +String? imageUrl
+        +fromJson()
+        +toJson()
+    }
+    
+    class FavoriteModel {
+        +int id
+        +String placeExternalId
+        +String placeName
+        +String? placeCategory
+        +double latitude
+        +double longitude
+        +String? address
+        +double? rating
+        +String? imageUrl
+        +DateTime createdAt
+        +fromJson()
+        +toJson()
+    }
+    
+    class PlaceVisitModel {
+        +int? id
+        +String placeExternalId
+        +String placeName
+        +String? placeCategory
+        +double latitude
+        +double longitude
+        +DateTime visitedAt
+        +int? rating
+        +String? review
+        +int? visitCount
+        +fromJson()
+        +toJson()
+    }
+            </div>
+        </div>
+
+        <h2>12. Servis Katmanı Yapısı</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
+graph TB
+    subgraph "Backend Services"
+        EmotionService[EmotionService]
+        RecommendationService[RecommendationService]
+        PlaceService[PlaceSyncService]
+        GooglePlacesService[GooglePlacesService]
+        FriendService[FriendService]
+        StoryService[StoryService]
+        MessageService[MessageService]
+        NotificationService[NotificationService]
+        AdminStatsService[AdminStatsService]
+        AdminUserService[AdminUserService]
+        AdminPlaceService[AdminPlaceService]
+    end
+    
+    subgraph "Flutter Services"
+        ApiService[ApiService]
+        EmotionDetectionService[EmotionDetectionService]
+    end
+    
+    EmotionService --> RecommendationService
+    RecommendationService --> GooglePlacesService
+    RecommendationService --> PlaceService
+    GooglePlacesService -->|HTTP| GoogleAPI[Google Places API]
+    ApiService -->|HTTP/REST| EmotionService
+    ApiService -->|HTTP/REST| RecommendationService
+    EmotionDetectionService -->|ML Model| EmotionService
+            </div>
+        </div>
+
+        <div class="info-box" style="margin-top: 40px;">
+            <strong>📝 Notlar:</strong><br>
+            • Tüm API endpoint'leri JWT token ile korunmaktadır<br>
+            • Admin endpoint'leri @PreAuthorize("hasRole('ADMIN')") ile korunur<br>
+            • Google Places API entegrasyonu RecommendationService içinde yapılır<br>
+            • Duygu tespiti Flutter tarafında yapılır, sonuç backend'e gönderilir<br>
+            • Veritabanı ilişkileri JPA @ManyToOne, @OneToOne, @OneToMany ile yönetilir<br>
+            • Flyway migration dosyaları ile veritabanı şeması yönetilir
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            er: {
+                fontSize: 12,
+                useMaxWidth: true,
+                layoutDirection: 'TB'
+            },
+            themeVariables: {
+                primaryColor: '#3498db',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#2c3e50',
+                lineColor: '#34495e',
+                secondaryColor: '#ecf0f1',
+                tertiaryColor: '#f5f6fa'
+            }
+        });
+        
+        // ERD Pan and Zoom functionality
+        let erdZoomLevel = 1;
+        let erdPanX = 0;
+        let erdPanY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let initialPanX = 0;
+        let initialPanY = 0;
+        
+        function getERDContent() {
+            return document.getElementById('erdContent');
+        }
+        
+        function updateERDTransform() {
+            const erdContent = getERDContent();
+            if (erdContent) {
+                erdContent.style.transform = `translate(${erdPanX}px, ${erdPanY}px) scale(${erdZoomLevel})`;
+            }
+        }
+        
+        function zoomERD(factor) {
+            erdZoomLevel *= factor;
+            // Zoom merkez noktasına göre yapılır
+            updateERDTransform();
+        }
+        
+        function resetERDZoom() {
+            erdZoomLevel = 1;
+            erdPanX = 0;
+            erdPanY = 0;
+            updateERDTransform();
+        }
+        
+        // Mouse drag for panning
+        function setupERDPanZoom() {
+            const erdContainer = document.querySelector('.erd-container');
+            if (!erdContainer) return;
+            
+            // Mouse down event
+            erdContainer.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.erd-zoom-controls')) return;
+                if (e.button !== 0) return; // Only left mouse button
+                e.preventDefault();
+                isDragging = true;
+                startX = e.clientX - erdPanX;
+                startY = e.clientY - erdPanY;
+                erdContainer.style.cursor = 'grabbing';
+            });
+            
+            // Mouse move event on document (so it works even outside container)
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                erdPanX = e.clientX - startX;
+                erdPanY = e.clientY - startY;
+                updateERDTransform();
+            });
+            
+            // Mouse up event on document
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    erdContainer.style.cursor = 'grab';
+                }
+            });
+            
+            erdContainer.addEventListener('mouseleave', () => {
+                // Don't stop dragging on mouse leave, let it continue
+            });
+            
+            // Touch events for mobile
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchInitialPanX = 0;
+            let touchInitialPanY = 0;
+            
+            erdContainer.addEventListener('touchstart', (e) => {
+                if (e.target.closest('.erd-zoom-controls')) return;
+                if (e.touches.length === 1) {
+                    touchStartX = e.touches[0].clientX - erdPanX;
+                    touchStartY = e.touches[0].clientY - erdPanY;
+                    touchInitialPanX = erdPanX;
+                    touchInitialPanY = erdPanY;
+                }
+            });
+            
+            erdContainer.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1) {
+                    e.preventDefault();
+                    erdPanX = e.touches[0].clientX - touchStartX;
+                    erdPanY = e.touches[0].clientY - touchStartY;
+                    updateERDTransform();
+                }
+            });
+        }
+        
+        // Setup pan and zoom after page loads
+        setupERDPanZoom();
+        
+        // Initialize ERD transform on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                updateERDTransform();
+                setupERDPanZoom(); // Re-setup in case elements weren't ready
+            }, 1000); // Wait for Mermaid to render
+        });
+    </script>
+</body>
+</html>
